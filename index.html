@@ -150,7 +150,6 @@ updateClock();
 async function loadLiveData(){
 
   try{
-    // Fetching clean HTTPS live data for Bramley (BMY) via Huxley open proxy
     const url = "https://huxley2.azurewebsites.net/departures/BMY?rows=8";
 
     const response = await fetch(url);
@@ -212,17 +211,17 @@ function autoBarrier(rows){
   let closingSoon = false;
 
   rows.forEach(r => {
-    if(!r.time) return;
+    if(!r.time || r.time === "--:--") return;
 
     const parts = r.time.split(":");
     const t = new Date();
-    t.setHours(parts[0]);
-    t.setMinutes(parts[1]);
+    t.setHours(parseInt(parts[0], 10));
+    t.setMinutes(parseInt(parts[1], 10));
     t.setSeconds(0);
+    t.setMilliseconds(0);
 
-    const diff = (t-now)/1000/60;
+    const diff = (t - now) / 1000 / 60;
 
-    // Barrier shows closed if a train leaves in less than 2 minutes
     if(diff >= 0 && diff <= 2){
       closingSoon = true;
     }
