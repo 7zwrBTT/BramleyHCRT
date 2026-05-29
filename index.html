@@ -130,7 +130,7 @@ Loading live data...
 </div>
 
 <div class="footer">
-LIVE WEB SCRAPER MODE • AUTO REFRESH 60 SEC
+LIVE API MODE • AUTO REFRESH 60 SEC
 </div>
 
 </div>
@@ -150,61 +150,50 @@ updateClock();
 async function loadLiveData(){
 
   try{
-
-    // Using a reliable text-based departures portal that retains clean HTML tables
-    const target =
-      "https://orsted.com.globalwfm.com/journeycheck/southwesternrailway/station/BMY/departures";
-
-    // Bypass CORS using public mirror
-    const url =
-      "https://api.allorigins.win/raw?url=" +
-      encodeURIComponent(target);
+    // Using an open public transit API endpoint for Bramley (BMY) departures
+    // This bypasses the need for a web-scraping proxy entirely
+    const url = "https://transportapi.com/v3/uk/train/station/BMY/live.json?app_id=0c1d1a6e&app_key=2ef819bc5a4ef694fe6b41299df9469e&train_status=passenger";
 
     const response = await fetch(url);
+    if (!response.ok) throw new Error("API Network error");
+    
+    const data = await response.json();
+    
+    // Grab departures array
+    const departures = data.departures?.all || [];
 
-    const html = await response.text();
-
-    // Extract rows from HTML
-    const parser = new DOMParser();
-    const doc = parser.parseFromString(html, "text/html");
-
-    const rows = [];
-
-    const possibleRows = doc.querySelectorAll("tr");
-
-    possibleRows.forEach(r => {
-
-      const text = r.innerText || "";
-
-      const timeMatch = text.match(/\d{2}:\d{2}/);
-
-      if(!timeMatch) return;
-
-      const cols = r.querySelectorAll("td");
-
-      if(cols.length < 3) return;
-
-      rows.push({
-        time: cols[0]?.innerText?.trim() || "--:--",
-        destination: cols[1]?.innerText?.trim() || "Unknown",
-        platform: cols[2]?.innerText?.trim() || "-",
-        status: cols[3]?.innerText?.trim() || "On time"
-      });
-    });
-
-    if(rows.length === 0){
-      throw new Error("No live trains found");
+    if(departures.length === 0){
+      board.innerHTML = `<div class="sub">No scheduled departures found.</div>`;
+      autoBarrier([]);
+      return;
     }
+
+    // Process and format the data
+    const rows = departures.map(train => {
+      let statusText = "On time";
+      if (train.status === "LATE" || train.status === "DELAYED") {
+        statusText = `Late (${train.expected_departure_time || 'Delayed'})`;
+      } else if (train.status === "CANCELLED") {
+        statusText = "Cancelled";
+      }
+
+      return {
+        time: train.aimed_departure_time || "--:--",
+        destination: train.destination_name || "Unknown Destination",
+        platform: train.platform || "-",
+        status: statusText
+      };
+    });
 
     board.innerHTML = rows.slice(0,8).map(train => `
       <div class="row">
-        <div class="${train.status.includes('Delayed') || train.status.includes('Late') ? 'late':''}">
+        <div class="${train.status.includes('Late') || train.status.includes('Cancelled') ? 'late':''}">
           ${train.time}
         </div>
 
         <div>
           ${train.destination}
-          ${train.status !== 'On time' && train.status !== ''
+          ${train.status !== 'On time'
             ? `<span class="late"> • ${train.status}</span>`
             : ''
           }
@@ -217,49 +206,43 @@ async function loadLiveData(){
     autoBarrier(rows);
 
   }catch(err){
-
+    console.error(err);
     board.innerHTML = `
       <div class="error">
         LIVE FEED TEMPORARILY UNAVAILABLE<br><br>
-        Check internet connection or proxy status.
+        Check internet connection.
       </div>
     `;
   }
 }
 
 function autoBarrier(rows){
-
   const now = new Date();
-
   let closingSoon = false;
 
   rows.forEach(r => {
-
     if(!r.time) return;
 
     const parts = r.time.split(":");
-
     const t = new Date();
-
     t.setHours(parts[0]);
     t.setMinutes(parts[1]);
     t.setSeconds(0);
 
     const diff = (t-now)/1000/60;
 
-    if(diff >=0 && diff <=2){
+    // If a train is departing in the next 2 minutes, barrier closes
+    if(diff >= 0 && diff <= 2){
       closingSoon = true;
     }
   });
 
   const el = document.getElementById("barrier");
-
   el.innerText = closingSoon ? "CLOSED" : "OPEN";
   el.className = closingSoon ? "closed" : "open";
 }
 
 loadLiveData();
-
 setInterval(loadLiveData,60000);
 
 if ('serviceWorker' in navigator) {
