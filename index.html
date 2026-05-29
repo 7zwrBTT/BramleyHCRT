@@ -130,7 +130,7 @@ Loading live data...
 </div>
 
 <div class="footer">
-LIVE API MODE • AUTO REFRESH 60 SEC
+LIVE ENGINE MODE • AUTO REFRESH 60 SEC
 </div>
 
 </div>
@@ -150,25 +150,25 @@ updateClock();
 async function loadLiveData(){
 
   try{
-    // Using an open public transit API endpoint for Bramley (BMY) departures
-    // This bypasses the need for a web-scraping proxy entirely
-    const url = "https://transportapi.com/v3/uk/train/station/BMY/live.json?app_id=0c1d1a6e&app_key=2ef819bc5a4ef694fe6b41299df9469e&train_status=passenger";
+    // Fetch via an open public mirror to bypass cross-origin browser security locks (CORS)
+    const targetUrl = "https://transportapi.com/v3/uk/train/station/BMY/live.json?app_id=0c1d1a6e&app_key=2ef819bc5a4ef694fe6b41299df9469e&train_status=passenger";
+    const proxyUrl = "https://api.allorigins.win/get?url=" + encodeURIComponent(targetUrl);
 
-    const response = await fetch(url);
-    if (!response.ok) throw new Error("API Network error");
+    const response = await fetch(proxyUrl);
+    if (!response.ok) throw new Error("Network issue");
     
-    const data = await response.json();
+    const wrapper = await response.json();
+    // Allorigins wraps the string data inside a .contents field
+    const data = JSON.parse(wrapper.contents);
     
-    // Grab departures array
     const departures = data.departures?.all || [];
 
     if(departures.length === 0){
-      board.innerHTML = `<div class="sub">No scheduled departures found.</div>`;
+      board.innerHTML = `<div class="sub" style="text-align:center; padding:15px;">No upcoming departures scheduled.</div>`;
       autoBarrier([]);
       return;
     }
 
-    // Process and format the data
     const rows = departures.map(train => {
       let statusText = "On time";
       if (train.status === "LATE" || train.status === "DELAYED") {
@@ -206,11 +206,11 @@ async function loadLiveData(){
     autoBarrier(rows);
 
   }catch(err){
-    console.error(err);
+    console.error("Fetch error:", err);
     board.innerHTML = `
       <div class="error">
         LIVE FEED TEMPORARILY UNAVAILABLE<br><br>
-        Check internet connection.
+        Check connection or service status.
       </div>
     `;
   }
@@ -231,7 +231,7 @@ function autoBarrier(rows){
 
     const diff = (t-now)/1000/60;
 
-    // If a train is departing in the next 2 minutes, barrier closes
+    // Trigger barrier down if a train leaves within 2 minutes
     if(diff >= 0 && diff <= 2){
       closingSoon = true;
     }
