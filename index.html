@@ -150,18 +150,14 @@ updateClock();
 async function loadLiveData(){
 
   try{
-    // Fetch via an open public mirror to bypass cross-origin browser security locks (CORS)
-    const targetUrl = "https://transportapi.com/v3/uk/train/station/BMY/live.json?app_id=0c1d1a6e&app_key=2ef819bc5a4ef694fe6b41299df9469e&train_status=passenger";
-    const proxyUrl = "https://api.allorigins.win/get?url=" + encodeURIComponent(targetUrl);
+    // Fetching clean HTTPS live data for Bramley (BMY) via Huxley open proxy
+    const url = "https://huxley2.azurewebsites.net/departures/BMY?rows=8";
 
-    const response = await fetch(proxyUrl);
-    if (!response.ok) throw new Error("Network issue");
+    const response = await fetch(url);
+    if (!response.ok) throw new Error("Server error");
     
-    const wrapper = await response.json();
-    // Allorigins wraps the string data inside a .contents field
-    const data = JSON.parse(wrapper.contents);
-    
-    const departures = data.departures?.all || [];
+    const data = await response.json();
+    const departures = data.trainServices || [];
 
     if(departures.length === 0){
       board.innerHTML = `<div class="sub" style="text-align:center; padding:15px;">No upcoming departures scheduled.</div>`;
@@ -170,24 +166,19 @@ async function loadLiveData(){
     }
 
     const rows = departures.map(train => {
-      let statusText = "On time";
-      if (train.status === "LATE" || train.status === "DELAYED") {
-        statusText = `Late (${train.expected_departure_time || 'Delayed'})`;
-      } else if (train.status === "CANCELLED") {
-        statusText = "Cancelled";
-      }
-
+      let statusText = train.etd || "On time";
+      
       return {
-        time: train.aimed_departure_time || "--:--",
-        destination: train.destination_name || "Unknown Destination",
+        time: train.std || "--:--",
+        destination: train.destination?.[0]?.locationName || "Unknown Destination",
         platform: train.platform || "-",
         status: statusText
       };
     });
 
-    board.innerHTML = rows.slice(0,8).map(train => `
+    board.innerHTML = rows.map(train => `
       <div class="row">
-        <div class="${train.status.includes('Late') || train.status.includes('Cancelled') ? 'late':''}">
+        <div class="${train.status !== 'On time' ? 'late':''}">
           ${train.time}
         </div>
 
@@ -231,7 +222,7 @@ function autoBarrier(rows){
 
     const diff = (t-now)/1000/60;
 
-    // Trigger barrier down if a train leaves within 2 minutes
+    // Barrier shows closed if a train leaves in less than 2 minutes
     if(diff >= 0 && diff <= 2){
       closingSoon = true;
     }
