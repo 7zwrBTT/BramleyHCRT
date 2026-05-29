@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bramley Live CRT</title>
+
+<link rel="manifest" href="manifest.json">
+
+<style>
+body{
+  background:#020402;
+  color:#00ff99;
+  font-family:Courier New,monospace;
+  padding:18px;
+  margin:0;
+  text-shadow:0 0 8px rgba(0,255,120,.7);
+}
+
+body::before{
+  content:"";
+  position:fixed;
+  inset:0;
+  background:repeating-linear-gradient(
+    to bottom,
+    rgba(0,255,100,.05),
+    rgba(0,255,100,.05) 2px,
+    transparent 2px,
+    transparent 4px
+  );
+  pointer-events:none;
+}
+
+.screen{
+  border:3px solid #00ff99;
+  border-radius:20px;
+  padding:18px;
+  box-shadow:0 0 20px rgba(0,255,153,.4);
+}
+
+h1{
+  text-align:center;
+  margin:0;
+  font-size:2.2rem;
+}
+
+.sub{
+  text-align:center;
+  opacity:.6;
+  margin-bottom:20px;
+}
+
+.panel{
+  border:2px solid #00ff99;
+  border-radius:12px;
+  padding:12px;
+  margin-bottom:18px;
+  background:rgba(0,255,100,.03);
+}
+
+.title{
+  opacity:.7;
+  margin-bottom:12px;
+}
+
+.row{
+  display:grid;
+  grid-template-columns:80px 1fr 60px;
+  gap:10px;
+  padding:10px 0;
+  border-bottom:1px dashed rgba(0,255,120,.25);
+}
+
+.late{
+  color:#ffbb00;
+}
+
+.error{
+  color:#ff6666;
+}
+
+#clock{
+  float:right;
+}
+
+#barrier{
+  font-weight:bold;
+  font-size:1.4rem;
+}
+
+.open{
+  color:#00ff99;
+}
+
+.closed{
+  color:#ff4444;
+}
+
+.footer{
+  text-align:center;
+  opacity:.45;
+  margin-top:20px;
+  font-size:.8rem;
+}
+</style>
+</head>
+<body>
+
+<div class="screen">
+
+<h1>BRAMLEY</h1>
+<div class="sub">HAMPSHIRE LIVE CRT TERMINAL</div>
+
+<div class="panel">
+<div class="title">BARRIER STATUS</div>
+
+<div>
+<span id="barrier" class="open">OPEN</span>
+<span id="clock"></span>
+</div>
+
+</div>
+
+<div class="panel">
+<div class="title">LIVE NATIONAL RAIL DEPARTURES</div>
+
+<div id="board">
+Loading live data...
+</div>
+</div>
+
+<div class="footer">
+LIVE WEB SCRAPER MODE • AUTO REFRESH 60 SEC
+</div>
+
+</div>
+
+<script>
+
+const board = document.getElementById("board");
+
+function updateClock(){
+  document.getElementById("clock").innerText =
+    new Date().toLocaleTimeString("en-GB");
+}
+
+setInterval(updateClock,1000);
+updateClock();
+
+async function loadLiveData(){
+
+  try{
+
+    // Using a reliable text-based departures portal that retains clean HTML tables
+    const target =
+      "https://orsted.com.globalwfm.com/journeycheck/southwesternrailway/station/BMY/departures";
+
+    // Bypass CORS using public mirror
+    const url =
+      "https://api.allorigins.win/raw?url=" +
+      encodeURIComponent(target);
+
+    const response = await fetch(url);
+
+    const html = await response.text();
+
+    // Extract rows from HTML
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(html, "text/html");
+
+    const rows = [];
+
+    const possibleRows = doc.querySelectorAll("tr");
+
+    possibleRows.forEach(r => {
+
+      const text = r.innerText || "";
+
+      const timeMatch = text.match(/\d{2}:\d{2}/);
+
+      if(!timeMatch) return;
+
+      const cols = r.querySelectorAll("td");
+
+      if(cols.length < 3) return;
+
+      rows.push({
+        time: cols[0]?.innerText?.trim() || "--:--",
+        destination: cols[1]?.innerText?.trim() || "Unknown",
+        platform: cols[2]?.innerText?.trim() || "-",
+        status: cols[3]?.innerText?.trim() || "On time"
+      });
+    });
+
+    if(rows.length === 0){
+      throw new Error("No live trains found");
+    }
+
+    board.innerHTML = rows.slice(0,8).map(train => `
+      <div class="row">
+        <div class="${train.status.includes('Delayed') || train.status.includes('Late') ? 'late':''}">
+          ${train.time}
+        </div>
+
+        <div>
+          ${train.destination}
+          ${train.status !== 'On time' && train.status !== ''
+            ? `<span class="late"> • ${train.status}</span>`
+            : ''
+          }
+        </div>
+
+        <div>P${train.platform}</div>
+      </div>
+    `).join("");
+
+    autoBarrier(rows);
+
+  }catch(err){
+
+    board.innerHTML = `
+      <div class="error">
+        LIVE FEED TEMPORARILY UNAVAILABLE<br><br>
+        Check internet connection or proxy status.
+      </div>
+    `;
+  }
+}
+
+function autoBarrier(rows){
+
+  const now = new Date();
+
+  let closingSoon = false;
+
+  rows.forEach(r => {
+
+    if(!r.time) return;
+
+    const parts = r.time.split(":");
+
+    const t = new Date();
+
+    t.setHours(parts[0]);
+    t.setMinutes(parts[1]);
+    t.setSeconds(0);
+
+    const diff = (t-now)/1000/60;
+
+    if(diff >=0 && diff <=2){
+      closingSoon = true;
+    }
+  });
+
+  const el = document.getElementById("barrier");
+
+  el.innerText = closingSoon ? "CLOSED" : "OPEN";
+  el.className = closingSoon ? "closed" : "open";
+}
+
+loadLiveData();
+
+setInterval(loadLiveData,60000);
+
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('./service-worker.js');
+}
+</script>
+
+</body>
+</html>
