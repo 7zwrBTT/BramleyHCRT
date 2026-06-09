@@ -1,16 +1,40 @@
 {
-  "generatedAt": "demo",
-  "source": "Demo data until GitHub Actions runs",
+  "generatedAt": "2026-06-09T16:06:35.267Z",
+  "source": "RTT fetch failed; demo fallback",
   "departures": {
     "RDG": [
       {
-        "time": "09:12",
+        "time": "16:11",
         "destination": "Basingstoke",
-        "platform": "1",
+        "platform": "2",
         "status": "On time"
       },
       {
-        "time": "09:43",
+        "time": "16:28",
+        "destination": "Reading",
+        "platform": "2",
+        "status": "On time"
+      },
+      {
+        "time": "16:45",
+        "destination": "Basingstoke",
+        "platform": "2",
+        "status": "+3"
+      },
+      {
+        "time": "17:02",
+        "destination": "Reading",
+        "platform": "2",
+        "status": "On time"
+      },
+      {
+        "time": "17:19",
+        "destination": "Basingstoke",
+        "platform": "2",
+        "status": "On time"
+      },
+      {
+        "time": "17:36",
         "destination": "Reading",
         "platform": "2",
         "status": "On time"
@@ -18,71 +42,191 @@
     ],
     "RDW": [
       {
-        "time": "09:12",
+        "time": "16:11",
         "destination": "Basingstoke",
         "platform": "1",
         "status": "On time"
       },
       {
-        "time": "09:43",
+        "time": "16:28",
         "destination": "Reading",
-        "platform": "2",
+        "platform": "1",
+        "status": "On time"
+      },
+      {
+        "time": "16:45",
+        "destination": "Basingstoke",
+        "platform": "1",
+        "status": "+3"
+      },
+      {
+        "time": "17:02",
+        "destination": "Reading",
+        "platform": "1",
+        "status": "On time"
+      },
+      {
+        "time": "17:19",
+        "destination": "Basingstoke",
+        "platform": "1",
+        "status": "On time"
+      },
+      {
+        "time": "17:36",
+        "destination": "Reading",
+        "platform": "1",
         "status": "On time"
       }
     ],
     "RGP": [
       {
-        "time": "09:12",
+        "time": "16:11",
         "destination": "Basingstoke",
         "platform": "1",
         "status": "On time"
       },
       {
-        "time": "09:43",
+        "time": "16:28",
         "destination": "Reading",
-        "platform": "2",
+        "platform": "1",
+        "status": "On time"
+      },
+      {
+        "time": "16:45",
+        "destination": "Basingstoke",
+        "platform": "1",
+        "status": "+3"
+      },
+      {
+        "time": "17:02",
+        "destination": "Reading",
+        "platform": "1",
+        "status": "On time"
+      },
+      {
+        "time": "17:19",
+        "destination": "Basingstoke",
+        "platform": "1",
+        "status": "On time"
+      },
+      {
+        "time": "17:36",
+        "destination": "Reading",
+        "platform": "1",
         "status": "On time"
       }
     ],
     "MOR": [
       {
-        "time": "09:12",
+        "time": "16:11",
         "destination": "Basingstoke",
         "platform": "1",
         "status": "On time"
       },
       {
-        "time": "09:43",
+        "time": "16:28",
         "destination": "Reading",
-        "platform": "2",
+        "platform": "1",
+        "status": "On time"
+      },
+      {
+        "time": "16:45",
+        "destination": "Basingstoke",
+        "platform": "1",
+        "status": "+3"
+      },
+      {
+        "time": "17:02",
+        "destination": "Reading",
+        "platform": "1",
+        "status": "On time"
+      },
+      {
+        "time": "17:19",
+        "destination": "Basingstoke",
+        "platform": "1",
+        "status": "On time"
+      },
+      {
+        "time": "17:36",
+        "destination": "Reading",
+        "platform": "1",
         "status": "On time"
       }
     ],
     "BMY": [
       {
-        "time": "09:12",
+        "time": "16:11",
         "destination": "Basingstoke",
         "platform": "1",
         "status": "On time"
       },
       {
-        "time": "09:43",
+        "time": "16:28",
         "destination": "Reading",
-        "platform": "2",
+        "platform": "1",
+        "status": "On time"
+      },
+      {
+        "time": "16:45",
+        "destination": "Basingstoke",
+        "platform": "1",
+        "status": "+3"
+      },
+      {
+        "time": "17:02",
+        "destination": "Reading",
+        "platform": "1",
+        "status": "On time"
+      },
+      {
+        "time": "17:19",
+        "destination": "Basingstoke",
+        "platform": "1",
+        "status": "On time"
+      },
+      {
+        "time": "17:36",
+        "destination": "Reading",
+        "platform": "1",
         "status": "On time"
       }
     ],
     "BSK": [
       {
-        "time": "09:12",
+        "time": "16:11",
         "destination": "Basingstoke",
-        "platform": "1",
+        "platform": "5",
         "status": "On time"
       },
       {
-        "time": "09:43",
+        "time": "16:28",
         "destination": "Reading",
-        "platform": "2",
+        "platform": "5",
+        "status": "On time"
+      },
+      {
+        "time": "16:45",
+        "destination": "Basingstoke",
+        "platform": "5",
+        "status": "+3"
+      },
+      {
+        "time": "17:02",
+        "destination": "Reading",
+        "platform": "5",
+        "status": "On time"
+      },
+      {
+        "time": "17:19",
+        "destination": "Basingstoke",
+        "platform": "5",
+        "status": "On time"
+      },
+      {
+        "time": "17:36",
+        "destination": "Reading",
+        "platform": "5",
         "status": "On time"
       }
     ]
