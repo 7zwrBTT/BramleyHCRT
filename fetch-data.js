@@ -68,8 +68,8 @@ async function main() {
 }
 
 async function fetchStationData(crs) {
-  // Updated path endpoint syntax for api-portal.rtt.io
-  const endpoint = `/api/v1/json/search/${encodeURIComponent(crs)}`;
+  // Fix: Correct endpoint structure for the api-portal.rtt.io NG platform
+  const endpoint = `/search/${encodeURIComponent(crs)}`;
 
   console.log(`Trying ${RTT_BASE}${endpoint}`);
   return await rtt(endpoint);
