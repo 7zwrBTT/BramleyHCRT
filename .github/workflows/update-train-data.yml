@@ -33,5 +33,4 @@ jobs:
           git config user.email "github-actions@github.com"
           git add data/line.json data/departures.json
           git diff --staged --quiet || git commit -m "Update train data"
-          git pull --rebase origin main
-          git push
+          git push --force-with-lease
