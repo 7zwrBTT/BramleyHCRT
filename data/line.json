@@ -1,6 +1,6 @@
 {
-  "generatedAt": "demo",
-  "source": "Demo data until GitHub Actions runs",
+  "generatedAt": "2026-06-09T16:37:40.400Z",
+  "source": "RTT fetch failed; demo fallback",
   "trains": [
     {
       "id": "2J79",
@@ -10,7 +10,7 @@
       "location": "Bramley",
       "direction": "down",
       "delay": 0,
-      "source": "demo"
+      "source": "RTT fetch failed; demo fallback"
     },
     {
       "id": "4M78",
@@ -21,7 +21,7 @@
       "direction": "up",
       "delay": 4,
       "freight": true,
-      "source": "demo"
+      "source": "RTT fetch failed; demo fallback"
     }
   ]
 }
