@@ -19,3 +19,14 @@ button,select{background:#001a0a;color:#00ff99;border:2px solid #00ff99;border-r
 .modal{position:fixed;inset:0;background:rgba(0,0,0,.82);display:flex;align-items:center;justify-content:center;z-index:30}
 .hidden{display:none}.modal-card{width:min(90vw,540px);border:2px solid #00ff99;border-radius:14px;background:#010b04;padding:14px}pre{white-space:pre-wrap}
 @media(min-width:760px){nav{grid-template-columns:repeat(6,1fr)}}
+
+
+a {
+  color: #00ff99;
+  text-decoration: underline;
+}
+
+footer a {
+  color: #00ff99;
+  font-weight: bold;
+}
