@@ -17,13 +17,8 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: "20"
-          cache: 'npm' # Optional: Speeds up your workflow runs
 
-      # FIX: Ensure dependencies are installed before running the script
-      - name: Install dependencies
-        run: npm install
-
-      # Your script will now see RTT_TOKEN and automatically use Bearer authentication
+      # Your script will see RTT_TOKEN and automatically use Bearer authentication
       - name: Fetch Realtime Trains data
         env:
           RTT_TOKEN: ${{ secrets.RTT_TOKEN }}
