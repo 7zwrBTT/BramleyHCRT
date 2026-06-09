@@ -22,8 +22,8 @@ jobs:
       - name: Fetch Realtime Trains data
         env:
           RTT_TOKEN: ${{ secrets.RTT_TOKEN }}
-          RTT_AUTH_MODE: "bearer" # Forces your script into token mode
-          RTT_BASE: ${{ vars.RTT_BASE }}
+          RTT_AUTH_MODE: "bearer"
+          RTT_BASE: "https://api-portal.rtt.io" 
         run: node fetch-data.js
 
       - name: Commit updated JSON
