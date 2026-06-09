@@ -68,8 +68,8 @@ async function main() {
 }
 
 async function fetchStationData(crs) {
-  // Fix: Correct endpoint structure for the api-portal.rtt.io NG platform
-  const endpoint = `/search/${encodeURIComponent(crs)}`;
+  // Fix: Prepend the required /api prefix for the Next-Gen platform routes
+  const endpoint = `/api/search/${encodeURIComponent(crs)}`;
 
   console.log(`Trying ${RTT_BASE}${endpoint}`);
   return await rtt(endpoint);
