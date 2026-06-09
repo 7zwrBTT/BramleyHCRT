@@ -26,7 +26,7 @@ function boot(){
 const sel=$("stationSelect");
 STATIONS.forEach(s=>{const opt=document.createElement("option");opt.value=s.crs;opt.textContent=s.name;sel.appendChild(opt);});
 sel.value="BMY"; sel.onchange=()=>renderDepartures(sel.value);
-refresh(); setInterval(refresh,60000);
+refresh(); setInterval(refresh,30000);
 if("serviceWorker" in navigator){navigator.serviceWorker.register("./service-worker.js");}
 }
 
