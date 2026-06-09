@@ -68,11 +68,14 @@ async function main() {
 }
 
 async function fetchStationData(crs) {
+  // Updated for the new api-portal.rtt.io 
   const endpoint =
-    `/rtt/location?code=gb-nr:${encodeURIComponent(crs)}&timeWindow=120&detailed=true`;
+    `/api/v1/json/search/${encodeURIComponent(crs)}`;
 
   console.log(`Trying ${RTT_BASE}${endpoint}`);
   return await rtt(endpoint);
+}
+}
 }
 
 async function rtt(endpoint) {
