@@ -27,7 +27,7 @@ jobs:
           RTT_BASE: ${{ vars.RTT_BASE }}
         run: node fetch-data.js
 
-         - name: Commit updated JSON
+      - name: Commit updated JSON
         run: |
           git config user.name "github-actions"
           git config user.email "github-actions@github.com"
