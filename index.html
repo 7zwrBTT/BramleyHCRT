@@ -8,90 +8,75 @@
 <link rel="stylesheet" href="style.css">
 <meta name="theme-color" content="#00ff99">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 </head>
 <body>
 <div class="crt">
-  <header>
-    <h1>BRAMLEY CONTROL TERMINAL</h1>
-    <div class="sub">READING ⇄ BASINGSTOKE ROUTE PANEL</div>
-    <div id="systemStatus" class="status">SYSTEM: BOOTING</div>
-  </header>
+<header>
+<h1>BRAMLEY CONTROL TERMINAL</h1>
+<div class="sub">READING ⇄ BASINGSTOKE ROUTE PANEL</div>
+<div id="systemStatus" class="status">SYSTEM: BOOTING</div>
+</header>
 
-  <nav>
-    <button data-view="panel">LINE PANEL</button>
-    <button data-view="departures">DEPARTURES</button>
-    <button data-view="stations">STATIONS</button>
-    <button data-view="freight">FREIGHT</button>
-    <button data-view="crossing">CROSSING</button>
-    <button data-view="about">ABOUT</button>
-  </nav>
+<nav>
+<button data-view="panel">LINE PANEL</button>
+<button data-view="departures">DEPARTURES</button>
+<button data-view="stations">STATIONS</button>
+<button data-view="freight">FREIGHT</button>
+<button data-view="crossing">CROSSING</button>
+<button data-view="about">ABOUT</button>
+</nav>
 
-  <main>
-    <section id="panel" class="view active">
-      <div class="panel">
-        <div class="title">READING → READING WEST → READING GREEN PARK → MORTIMER → BRAMLEY → BASINGSTOKE</div>
-        <div id="linePanel" class="line-panel"></div>
-      </div>
-      <div class="panel">
-        <div class="title">ACTIVE SERVICES ON ROUTE</div>
-        <div id="activeTrains">Loading trains...</div>
-      </div>
-    </section>
+<main>
+<section id="panel" class="view active">
+<div class="panel">
+<div class="title">READING → READING WEST → READING GREEN PARK → MORTIMER → BRAMLEY → BASINGSTOKE</div>
+<div id="linePanel" class="line-panel"></div>
+</div>
+<div class="panel">
+<div class="title">ACTIVE SERVICES ON ROUTE</div>
+<div id="activeTrains">Loading trains...</div>
+</div>
+</section>
 
-    <section id="departures" class="view">
-      <div class="panel">
-        <div class="title">STATION DEPARTURE BOARD</div>
-        <select id="stationSelect"></select>
-        <div id="departureBoard">Select a station...</div>
-      </div>
-    </section>
+<section id="departures" class="view">
+<div class="panel">
+<div class="title">STATION DEPARTURE BOARD</div>
+<select id="stationSelect"></select>
+<div id="departureBoard">Select a station...</div>
+</div>
+</section>
 
-    <section id="stations" class="view">
-      <div class="panel">
-        <div class="title">ALL STATIONS</div>
-        <div id="allStations"></div>
-      </div>
-    </section>
+<section id="stations" class="view">
+<div class="panel">
+<div class="title">ALL STATIONS</div>
+<div id="allStations"></div>
+</div>
+</section>
 
-    <section id="freight" class="view">
-      <div class="panel">
-        <div class="title">FREIGHT MONITOR</div>
-        <div id="freightBoard">Loading freight...</div>
-      </div>
-    </section>
+<section id="freight" class="view">
+<div class="panel">
+<div class="title">FREIGHT MONITOR</div>
+<div id="freightBoard">Loading freight...</div>
+</div>
+</section>
 
-    <section id="crossing" class="view">
-      <div class="panel crossing-panel">
-        <div class="title">BRAMLEY LEVEL CROSSING PREDICTOR</div>
-        <div id="crossingStatus" class="crossing-open">OPEN</div>
-        <div id="crossingDetail">Waiting for line data...</div>
-      </div>
-    </section>
+<section id="crossing" class="view">
+<div class="panel crossing-panel">
+<div class="title">BRAMLEY LEVEL CROSSING PREDICTOR</div>
+<div id="crossingStatus" class="crossing-open">OPEN</div>
+<div id="crossingDetail">Waiting for line data...</div>
+</div>
+</section>
 
-    <section id="about" class="view">
-      <div class="panel">
-        <div class="title">DATA SOURCES & CREDITS</div>
-
-        <p>
-          This application provides a retro CRT-style view of railway operations
-          on the Reading–Basingstoke line.
-        </p>
-
-        <h3>Realtime Train Data</h3>
-
-        <p>
-          Live train running information, schedules and service data are provided by
-          <a href="https://www.realtimetrains.co.uk" target="_blank" rel="noopener">Realtime Trains</a>.
-        </p>
-
-        <p>
-          Data © Realtime Trains.
-        </p>
-
-        <h3>Route Covered</h3>
-
-        <pre>READING
+<section id="about" class="view">
+<div class="panel">
+<div class="title">DATA SOURCES & CREDITS</div>
+<p>This application provides a retro CRT-style view of railway operations on the Reading–Basingstoke line.</p>
+<h3>Realtime Train Data</h3>
+<p>Live train running information, schedules and service data are provided by <a href="https://www.realtimetrains.co.uk" target="_blank" rel="noopener">Realtime Trains</a>.</p>
+<p>Data © Realtime Trains.</p>
+<h3>Route Covered</h3>
+<pre>READING
   │
 READING WEST
   │
@@ -102,33 +87,24 @@ MORTIMER
 BRAMLEY
   │
 BASINGSTOKE</pre>
+<h3>About This Project</h3>
+<p>Bramley Control Terminal is an independent enthusiast project designed to present railway information in a retro British Rail control-terminal style.</p>
+<p>This project is not affiliated with or endorsed by Realtime Trains, Network Rail, Great Western Railway, or any train operating company.</p>
+</div>
+</section>
+</main>
 
-        <h3>About This Project</h3>
-
-        <p>
-          Bramley Control Terminal is an independent enthusiast project designed
-          to present railway information in a retro British Rail control-terminal style.
-        </p>
-
-        <p>
-          This project is not affiliated with or endorsed by Realtime Trains,
-          Network Rail, Great Western Railway, or any train operating company.
-        </p>
-      </div>
-    </section>
-  </main>
-
-  <footer>
-    DATA <span id="dataTimestamp">--</span> • LOCAL <span id="localClock">--:--:--</span><br>
-    TRAIN DATA PROVIDED BY <a href="https://www.realtimetrains.co.uk" target="_blank" rel="noopener">REALTIME TRAINS</a>
-  </footer>
+<footer>
+DATA <span id="dataTimestamp">--</span> • LOCAL <span id="localClock">--:--:--</span><br>
+TRAIN DATA PROVIDED BY <a href="https://www.realtimetrains.co.uk" target="_blank" rel="noopener">REALTIME TRAINS</a>
+</footer>
 </div>
 
 <div id="trainModal" class="modal hidden">
-  <div class="modal-card">
-    <button id="closeModal">X</button>
-    <pre id="trainDetails"></pre>
-  </div>
+<div class="modal-card">
+<button id="closeModal">X</button>
+<pre id="trainDetails"></pre>
+</div>
 </div>
 
 <script src="app.js"></script>

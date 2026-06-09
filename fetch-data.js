@@ -10,18 +10,13 @@ const STATIONS = [
 ];
 
 const GENERATED_AT = new Date().toISOString();
-const RTT_BASE = (process.env.RTT_BASE || "https://api.rtt.io").replace(/\/$/, "");
-
+const RTT_BASE = (process.env.RTT_BASE || "https://data.rtt.io").replace(/\/$/, "");
 const RTT_TOKEN = process.env.RTT_TOKEN || "";
 const RTT_USERNAME = process.env.RTT_USERNAME || "";
 const RTT_PASSWORD = process.env.RTT_PASSWORD || "";
 const AUTH_MODE = process.env.RTT_AUTH_MODE || "auto";
 
 fs.mkdirSync("data", { recursive: true });
-
-const today = new Date();
-const dateDashed = today.toISOString().slice(0, 10);
-const dateCompact = dateDashed.replaceAll("-", "");
 
 main();
 
@@ -36,16 +31,17 @@ async function main() {
     const departures = {};
 
     for (const station of STATIONS) {
-      console.log(`Fetching ${station.crs}...`);
-
+      console.log(`Fetching ${station.name} (${station.crs})...`);
       const data = await fetchStationData(station.crs);
       const services = extractServices(data);
+
+      console.log(`${station.crs}: ${services.length} services returned`);
 
       departures[station.crs] = services.slice(0, 12).map(normaliseDeparture);
 
       for (const service of services) {
         const train = normaliseTrain(service, station);
-        trainsById.set(train.id + "-" + station.crs, train);
+        trainsById.set(`${train.id}-${station.crs}`, train);
       }
     }
 
@@ -72,32 +68,15 @@ async function main() {
 }
 
 async function fetchStationData(crs) {
-  const attempts = [
-    `/api/v1/json/search/${crs}/${dateCompact}`,
-    `/api/v1/json/search/${crs}/${dateDashed}`,
-    `/api/v1/json/search/${crs.toLowerCase()}/${dateCompact}`,
-    `/api/v1/json/search/${crs.toLowerCase()}/${dateDashed}`
-  ];
+  const endpoint =
+    `/rtt/location?code=gb-nr:${encodeURIComponent(crs)}&timeWindow=120&detailed=true`;
 
-  let lastError = "";
-
-  for (const endpoint of attempts) {
-    try {
-      console.log(`Trying ${endpoint}`);
-      return await rtt(endpoint);
-    } catch (err) {
-      lastError = err.message;
-      console.log(`Failed ${endpoint}: ${err.message}`);
-    }
-  }
-
-  throw new Error(`All endpoint attempts failed for ${crs}. Last error: ${lastError}`);
+  console.log(`Trying ${RTT_BASE}${endpoint}`);
+  return await rtt(endpoint);
 }
 
 async function rtt(endpoint) {
-  const headers = {
-    Accept: "application/json"
-  };
+  const headers = { Accept: "application/json" };
 
   if (AUTH_MODE === "bearer" || (AUTH_MODE === "auto" && RTT_TOKEN)) {
     headers.Authorization = `Bearer ${RTT_TOKEN}`;
@@ -112,7 +91,7 @@ async function rtt(endpoint) {
 
   if (!response.ok) {
     const text = await response.text().catch(() => "");
-    throw new Error(`${response.status} ${endpoint} ${text.slice(0, 100)}`);
+    throw new Error(`${response.status} ${endpoint} ${text.slice(0, 180)}`);
   }
 
   return response.json();
@@ -122,32 +101,37 @@ function extractServices(data) {
   if (Array.isArray(data.services)) return data.services;
   if (Array.isArray(data.results)) return data.results;
   if (Array.isArray(data.trains)) return data.trains;
+  if (Array.isArray(data.locations?.[0]?.services)) return data.locations[0].services;
+  if (Array.isArray(data.servicesAtLocation)) return data.servicesAtLocation;
   return [];
 }
 
 function normaliseDeparture(service) {
-  const loc = service.locationDetail || service.location || {};
+  const loc = service.locationDetail || service.location || service.currentLocation || {};
 
   return {
     time: formatTime(
       loc.realtimeDeparture ||
       loc.gbttBookedDeparture ||
       loc.realtimeArrival ||
-      loc.gbttBookedArrival
+      loc.gbttBookedArrival ||
+      service.realtimeDeparture ||
+      service.plannedDeparture
     ),
-    destination: firstName(service.destination) || "Unknown",
-    platform: loc.platform || "-",
-    status: delayText(loc)
+    destination: firstName(service.destination) || service.destinationName || "Unknown",
+    platform: loc.platform || service.platform || "-",
+    status: delayText(loc, service)
   };
 }
 
 function normaliseTrain(service, station) {
-  const loc = service.locationDetail || service.location || {};
+  const loc = service.locationDetail || service.location || service.currentLocation || {};
   const id = String(
     service.trainIdentity ||
     service.headcode ||
     service.serviceUid ||
     service.uid ||
+    service.rid ||
     "TRAIN"
   );
 
@@ -156,18 +140,19 @@ function normaliseTrain(service, station) {
       loc.realtimeDepartureActualLateness ||
       loc.realtimeArrivalActualLateness ||
       loc.lateness ||
+      service.lateness ||
       0
     );
 
   return {
     id,
-    origin: firstName(service.origin) || "Unknown",
-    destination: firstName(service.destination) || "Unknown",
+    origin: firstName(service.origin) || service.originName || "Unknown",
+    destination: firstName(service.destination) || service.destinationName || "Unknown",
     currentCrs: station.crs,
     location: station.name,
     direction: guessDirection(firstName(service.origin), firstName(service.destination)),
     delay: Math.round(delaySeconds / 60),
-    freight: /^[467]/.test(id),
+    freight: /^[467]/.test(id) || String(service.serviceType || "").toLowerCase().includes("freight"),
     source: "Realtime Trains"
   };
 }
@@ -176,52 +161,39 @@ function firstName(value) {
   if (Array.isArray(value) && value.length) {
     return value[0].description || value[0].name || value[0].publicName || value[0].crs || "";
   }
-
   if (value && typeof value === "object") {
     return value.description || value.name || value.publicName || value.crs || "";
   }
-
   if (typeof value === "string") return value;
-
   return "";
 }
 
 function formatTime(value) {
   if (!value) return "--:--";
-
   const str = String(value);
-
-  if (/^\d{4}$/.test(str)) {
-    return str.slice(0, 2) + ":" + str.slice(2);
-  }
-
-  if (/^\d{2}:\d{2}/.test(str)) {
-    return str.slice(0, 5);
-  }
-
+  if (/^\d{4}$/.test(str)) return str.slice(0, 2) + ":" + str.slice(2);
+  if (/^\d{2}:\d{2}/.test(str)) return str.slice(0, 5);
   return str;
 }
 
-function delayText(loc) {
+function delayText(loc, service) {
   const late =
     Number(
       loc.realtimeDepartureActualLateness ||
       loc.realtimeArrivalActualLateness ||
       loc.lateness ||
+      service.lateness ||
       0
     );
 
   if (late >= 60) return `+${Math.round(late / 60)}`;
-
   return "On time";
 }
 
 function guessDirection(origin, destination) {
   const to = String(destination || "").toLowerCase();
-
   if (to.includes("reading")) return "up";
   if (to.includes("basingstoke") || to.includes("southampton")) return "down";
-
   return "unknown";
 }
 

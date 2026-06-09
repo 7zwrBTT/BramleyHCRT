@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-06-09T16:27:58.793Z",
-  "source": "RTT fetch failed; demo fallback",
+  "generatedAt": "demo",
+  "source": "Demo data until GitHub Actions runs",
   "departures": {
     "RDG": [
       {

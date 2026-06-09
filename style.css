@@ -15,18 +15,7 @@ button,select{background:#001a0a;color:#00ff99;border:2px solid #00ff99;border-r
 .board-row{display:grid;grid-template-columns:65px 1fr 55px;gap:8px;padding:8px 0;border-bottom:1px dashed rgba(0,255,153,.22)}
 .station-card{margin-bottom:18px}.crossing-open{font-size:1.45rem;color:#00ff99;text-align:center;border:2px solid #00ff99;padding:18px;margin:12px 0}
 .crossing-closed{font-size:1.45rem;color:#ff4444;text-align:center;border:2px solid #ff4444;padding:18px;margin:12px 0;text-shadow:0 0 10px rgba(255,68,68,.9)}
-.error{color:#ff6666}.warn{color:#ffbb00}code{color:#ffbb00}
+.error{color:#ff6666}.warn{color:#ffbb00}code{color:#ffbb00}a{color:#00ff99;text-decoration:underline}footer a{font-weight:bold}
 .modal{position:fixed;inset:0;background:rgba(0,0,0,.82);display:flex;align-items:center;justify-content:center;z-index:30}
 .hidden{display:none}.modal-card{width:min(90vw,540px);border:2px solid #00ff99;border-radius:14px;background:#010b04;padding:14px}pre{white-space:pre-wrap}
 @media(min-width:760px){nav{grid-template-columns:repeat(6,1fr)}}
-
-
-a {
-  color: #00ff99;
-  text-decoration: underline;
-}
-
-footer a {
-  color: #00ff99;
-  font-weight: bold;
-}
