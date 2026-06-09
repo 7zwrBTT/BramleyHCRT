@@ -1,244 +1,96 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Bramley Live CRT</title>
-
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Bramley Control Terminal</title>
 <link rel="manifest" href="manifest.json">
-
-<style>
-body{
-  background:#020402;
-  color:#00ff99;
-  font-family:Courier New,monospace;
-  padding:18px;
-  margin:0;
-  text-shadow:0 0 8px rgba(0,255,120,.7);
-}
-
-body::before{
-  content:"";
-  position:fixed;
-  inset:0;
-  background:repeating-linear-gradient(
-    to bottom,
-    rgba(0,255,100,.05),
-    rgba(0,255,100,.05) 2px,
-    transparent 2px,
-    transparent 4px
-  );
-  pointer-events:none;
-}
-
-.screen{
-  border:3px solid #00ff99;
-  border-radius:20px;
-  padding:18px;
-  box-shadow:0 0 20px rgba(0,255,153,.4);
-}
-
-h1{
-  text-align:center;
-  margin:0;
-  font-size:2.2rem;
-}
-
-.sub{
-  text-align:center;
-  opacity:.6;
-  margin-bottom:20px;
-}
-
-.panel{
-  border:2px solid #00ff99;
-  border-radius:12px;
-  padding:12px;
-  margin-bottom:18px;
-  background:rgba(0,255,100,.03);
-}
-
-.title{
-  opacity:.7;
-  margin-bottom:12px;
-}
-
-.row{
-  display:grid;
-  grid-template-columns:80px 1fr 60px;
-  gap:10px;
-  padding:10px 0;
-  border-bottom:1px dashed rgba(0,255,120,.25);
-}
-
-.late{
-  color:#ffbb00;
-}
-
-.error{
-  color:#ff6666;
-}
-
-#clock{
-  float:right;
-}
-
-#barrier{
-  font-weight:bold;
-  font-size:1.4rem;
-}
-
-.open{
-  color:#00ff99;
-}
-
-.closed{
-  color:#ff4444;
-}
-
-.footer{
-  text-align:center;
-  opacity:.45;
-  margin-top:20px;
-  font-size:.8rem;
-}
-</style>
+<link rel="stylesheet" href="style.css">
+<meta name="theme-color" content="#00ff99">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 </head>
 <body>
+<div class="crt">
+  <header>
+    <h1>BRAMLEY CONTROL TERMINAL</h1>
+    <div class="sub">READING ⇄ BASINGSTOKE ROUTE PANEL</div>
+    <div id="systemStatus" class="status">SYSTEM: BOOTING</div>
+  </header>
 
-<div class="screen">
+  <nav>
+    <button data-view="panel">LINE PANEL</button>
+    <button data-view="departures">DEPARTURES</button>
+    <button data-view="stations">STATIONS</button>
+    <button data-view="freight">FREIGHT</button>
+    <button data-view="crossing">CROSSING</button>
+    <button data-view="about">ABOUT</button>
+  </nav>
 
-<h1>BRAMLEY</h1>
-<div class="sub">HAMPSHIRE LIVE CRT TERMINAL</div>
-
-<div class="panel">
-<div class="title">BARRIER STATUS</div>
-
-<div>
-<span id="barrier" class="open">OPEN</span>
-<span id="clock"></span>
-</div>
-
-</div>
-
-<div class="panel">
-<div class="title">LIVE NATIONAL RAIL DEPARTURES</div>
-
-<div id="board">
-Loading live data...
-</div>
-</div>
-
-<div class="footer">
-LIVE ENGINE MODE • AUTO REFRESH 60 SEC
-</div>
-
-</div>
-
-<script>
-
-const board = document.getElementById("board");
-
-function updateClock(){
-  document.getElementById("clock").innerText =
-    new Date().toLocaleTimeString("en-GB");
-}
-
-setInterval(updateClock,1000);
-updateClock();
-
-async function loadLiveData(){
-
-  try{
-    const url = "https://huxley2.azurewebsites.net/departures/BMY?rows=8";
-
-    const response = await fetch(url);
-    if (!response.ok) throw new Error("Server error");
-    
-    const data = await response.json();
-    const departures = data.trainServices || [];
-
-    if(departures.length === 0){
-      board.innerHTML = `<div class="sub" style="text-align:center; padding:15px;">No upcoming departures scheduled.</div>`;
-      autoBarrier([]);
-      return;
-    }
-
-    const rows = departures.map(train => {
-      let statusText = train.etd || "On time";
-      
-      return {
-        time: train.std || "--:--",
-        destination: train.destination?.[0]?.locationName || "Unknown Destination",
-        platform: train.platform || "-",
-        status: statusText
-      };
-    });
-
-    board.innerHTML = rows.map(train => `
-      <div class="row">
-        <div class="${train.status !== 'On time' ? 'late':''}">
-          ${train.time}
-        </div>
-
-        <div>
-          ${train.destination}
-          ${train.status !== 'On time'
-            ? `<span class="late"> • ${train.status}</span>`
-            : ''
-          }
-        </div>
-
-        <div>P${train.platform}</div>
+  <main>
+    <section id="panel" class="view active">
+      <div class="panel">
+        <div class="title">READING → READING WEST → READING GREEN PARK → MORTIMER → BRAMLEY → BASINGSTOKE</div>
+        <div id="linePanel" class="line-panel"></div>
       </div>
-    `).join("");
-
-    autoBarrier(rows);
-
-  }catch(err){
-    console.error("Fetch error:", err);
-    board.innerHTML = `
-      <div class="error">
-        LIVE FEED TEMPORARILY UNAVAILABLE<br><br>
-        Check connection or service status.
+      <div class="panel">
+        <div class="title">ACTIVE SERVICES ON ROUTE</div>
+        <div id="activeTrains">Loading trains...</div>
       </div>
-    `;
-  }
-}
+    </section>
 
-function autoBarrier(rows){
-  const now = new Date();
-  let closingSoon = false;
+    <section id="departures" class="view">
+      <div class="panel">
+        <div class="title">STATION DEPARTURE BOARD</div>
+        <select id="stationSelect"></select>
+        <div id="departureBoard">Select a station...</div>
+      </div>
+    </section>
 
-  rows.forEach(r => {
-    if(!r.time || r.time === "--:--") return;
+    <section id="stations" class="view">
+      <div class="panel">
+        <div class="title">ALL STATIONS</div>
+        <div id="allStations"></div>
+      </div>
+    </section>
 
-    const parts = r.time.split(":");
-    const t = new Date();
-    t.setHours(parseInt(parts[0], 10));
-    t.setMinutes(parseInt(parts[1], 10));
-    t.setSeconds(0);
-    t.setMilliseconds(0);
+    <section id="freight" class="view">
+      <div class="panel">
+        <div class="title">FREIGHT MONITOR</div>
+        <div id="freightBoard">Loading freight...</div>
+      </div>
+    </section>
 
-    const diff = (t - now) / 1000 / 60;
+    <section id="crossing" class="view">
+      <div class="panel crossing-panel">
+        <div class="title">BRAMLEY LEVEL CROSSING PREDICTOR</div>
+        <div id="crossingStatus" class="crossing-open">OPEN</div>
+        <div id="crossingDetail">Waiting for line data...</div>
+      </div>
+    </section>
 
-    if(diff >= 0 && diff <= 2){
-      closingSoon = true;
-    }
-  });
+    <section id="about" class="view">
+      <div class="panel">
+        <div class="title">GITHUB PAGES + RTT MODE</div>
+        <p>The site itself is static and runs on GitHub Pages.</p>
+        <p>GitHub Actions updates <code>data/line.json</code> and <code>data/departures.json</code> using your private RTT credentials.</p>
+        <p>Your token is never stored in this webpage.</p>
+      </div>
+    </section>
+  </main>
 
-  const el = document.getElementById("barrier");
-  el.innerText = closingSoon ? "CLOSED" : "OPEN";
-  el.className = closingSoon ? "closed" : "open";
-}
+  <footer>
+    DATA <span id="dataTimestamp">--</span> • LOCAL <span id="localClock">--:--:--</span>
+  </footer>
+</div>
 
-loadLiveData();
-setInterval(loadLiveData,60000);
+<div id="trainModal" class="modal hidden">
+  <div class="modal-card">
+    <button id="closeModal">X</button>
+    <pre id="trainDetails"></pre>
+  </div>
+</div>
 
-if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('./service-worker.js');
-}
-</script>
-
+<script src="app.js"></script>
 </body>
 </html>

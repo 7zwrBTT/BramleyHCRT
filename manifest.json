@@ -1,13 +1,15 @@
 {
-"name":"Bramley Live CRT",
-"short_name":"Bramley",
-"display":"standalone",
-"background_color":"#000000",
-"theme_color":"#00ff99",
-"start_url":".",
-"icons":[{
-"src":"icon.png",
-"sizes":"512x512",
-"type":"image/png"
-}]
+  "name": "Bramley Control Terminal",
+  "short_name": "Bramley CRT",
+  "display": "standalone",
+  "start_url": ".",
+  "background_color": "#000000",
+  "theme_color": "#00ff99",
+  "icons": [
+    {
+      "src": "icon.svg",
+      "sizes": "512x512",
+      "type": "image/svg+xml"
+    }
+  ]
 }

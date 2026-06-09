@@ -1,0 +1,90 @@
+{
+  "generatedAt": "demo",
+  "source": "Demo data until GitHub Actions runs",
+  "departures": {
+    "RDG": [
+      {
+        "time": "09:12",
+        "destination": "Basingstoke",
+        "platform": "1",
+        "status": "On time"
+      },
+      {
+        "time": "09:43",
+        "destination": "Reading",
+        "platform": "2",
+        "status": "On time"
+      }
+    ],
+    "RDW": [
+      {
+        "time": "09:12",
+        "destination": "Basingstoke",
+        "platform": "1",
+        "status": "On time"
+      },
+      {
+        "time": "09:43",
+        "destination": "Reading",
+        "platform": "2",
+        "status": "On time"
+      }
+    ],
+    "RGP": [
+      {
+        "time": "09:12",
+        "destination": "Basingstoke",
+        "platform": "1",
+        "status": "On time"
+      },
+      {
+        "time": "09:43",
+        "destination": "Reading",
+        "platform": "2",
+        "status": "On time"
+      }
+    ],
+    "MOR": [
+      {
+        "time": "09:12",
+        "destination": "Basingstoke",
+        "platform": "1",
+        "status": "On time"
+      },
+      {
+        "time": "09:43",
+        "destination": "Reading",
+        "platform": "2",
+        "status": "On time"
+      }
+    ],
+    "BMY": [
+      {
+        "time": "09:12",
+        "destination": "Basingstoke",
+        "platform": "1",
+        "status": "On time"
+      },
+      {
+        "time": "09:43",
+        "destination": "Reading",
+        "platform": "2",
+        "status": "On time"
+      }
+    ],
+    "BSK": [
+      {
+        "time": "09:12",
+        "destination": "Basingstoke",
+        "platform": "1",
+        "status": "On time"
+      },
+      {
+        "time": "09:43",
+        "destination": "Reading",
+        "platform": "2",
+        "status": "On time"
+      }
+    ]
+  }
+}

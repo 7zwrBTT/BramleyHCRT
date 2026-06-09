@@ -1,0 +1,27 @@
+{
+  "generatedAt": "demo",
+  "source": "Demo data until GitHub Actions runs",
+  "trains": [
+    {
+      "id": "2J79",
+      "origin": "Reading",
+      "destination": "Basingstoke",
+      "currentCrs": "BMY",
+      "location": "Bramley",
+      "direction": "down",
+      "delay": 0,
+      "source": "demo"
+    },
+    {
+      "id": "4M78",
+      "origin": "Southampton Western Docks",
+      "destination": "Trafford Park",
+      "currentCrs": "MOR",
+      "location": "Mortimer",
+      "direction": "up",
+      "delay": 4,
+      "freight": true,
+      "source": "demo"
+    }
+  ]
+}
