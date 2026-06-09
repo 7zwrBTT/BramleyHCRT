@@ -9,17 +9,25 @@ const STATIONS=[
   {name:"Basingstoke",crs:"BSK"}
 ];
 
-const GENERATED_AT=new Date().toISOString();
-const RTT_BASE=(process.env.RTT_BASE||"https://api.rtt.io").replace(/\/$/,"");
-const RTT_TOKEN=process.env.RTT_TOKEN||"";
-const RTT_USERNAME=process.env.RTT_USERNAME||"";
-const RTT_PASSWORD=process.env.RTT_PASSWORD||"";
-const AUTH_MODE=process.env.RTT_AUTH_MODE||"auto";
+const GENERATED_AT = new Date().toISOString();
+
+// RTT date format
+const apiDate = new Date().toISOString().slice(0, 10);
+
+const RTT_BASE = (process.env.RTT_BASE || "https://api.rtt.io").replace(/\/$/, "");
+
+const RTT_TOKEN = process.env.RTT_TOKEN || "";
+const RTT_USERNAME = process.env.RTT_USERNAME || "";
+const RTT_PASSWORD = process.env.RTT_PASSWORD || "";
+
+const AUTH_MODE = process.env.RTT_AUTH_MODE || "auto";
 
 fs.mkdirSync("data",{recursive:true});
 
 const today=new Date();
-const ymd=today.toISOString().slice(0,10).replaceAll("-","");
+const ymd = apiDate;
+
+console.log("RTT URL DATE:", ymd);
 
 try{
   if(!RTT_TOKEN && !(RTT_USERNAME && RTT_PASSWORD)){
