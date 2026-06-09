@@ -1,25 +1,15 @@
 {
-  "generatedAt": "2026-06-09T16:14:58.040Z",
+  "generatedAt": "2026-06-09T16:27:58.793Z",
   "source": "RTT fetch failed; demo fallback",
   "trains": [
     {
       "id": "2J79",
       "origin": "Reading",
       "destination": "Basingstoke",
-      "currentCrs": "RDW",
-      "location": "Reading West",
-      "direction": "down",
-      "delay": 0,
-      "source": "RTT fetch failed; demo fallback"
-    },
-    {
-      "id": "2J78",
-      "origin": "Basingstoke",
-      "destination": "Reading",
       "currentCrs": "BMY",
       "location": "Bramley",
-      "direction": "up",
-      "delay": 2,
+      "direction": "down",
+      "delay": 0,
       "source": "RTT fetch failed; demo fallback"
     },
     {
@@ -29,18 +19,7 @@
       "currentCrs": "MOR",
       "location": "Mortimer",
       "direction": "up",
-      "delay": 0,
-      "freight": true,
-      "source": "RTT fetch failed; demo fallback"
-    },
-    {
-      "id": "6O41",
-      "origin": "Acton",
-      "destination": "Southampton MCT",
-      "currentCrs": "BSK",
-      "location": "Basingstoke",
-      "direction": "down",
-      "delay": 7,
+      "delay": 4,
       "freight": true,
       "source": "RTT fetch failed; demo fallback"
     }
