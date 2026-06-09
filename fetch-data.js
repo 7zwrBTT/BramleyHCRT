@@ -10,7 +10,7 @@ const STATIONS = [
 ];
 
 const GENERATED_AT = new Date().toISOString();
-const RTT_BASE = (process.env.RTT_BASE || "https://data.rtt.io").replace(/\/$/, "");
+const RTT_BASE = (process.env.RTT_BASE || "https://api-portal.rtt.io").replace(/\/$/, "");
 const RTT_TOKEN = process.env.RTT_TOKEN || "";
 const RTT_USERNAME = process.env.RTT_USERNAME || "";
 const RTT_PASSWORD = process.env.RTT_PASSWORD || "";
@@ -68,14 +68,11 @@ async function main() {
 }
 
 async function fetchStationData(crs) {
-  // Updated for the new api-portal.rtt.io 
-  const endpoint =
-    `/api/v1/json/search/${encodeURIComponent(crs)}`;
+  // Updated path endpoint syntax for api-portal.rtt.io
+  const endpoint = `/api/v1/json/search/${encodeURIComponent(crs)}`;
 
   console.log(`Trying ${RTT_BASE}${endpoint}`);
   return await rtt(endpoint);
-}
-}
 }
 
 async function rtt(endpoint) {
